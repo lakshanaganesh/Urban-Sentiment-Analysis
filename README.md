@@ -1,1 +1,10 @@
-# Urban-Sentiment-Analysis
+# Urban_Sentiment_Analysis
+Recently, the North Avenue Review, a publication by students of Georgia Tech, released an article titled “Cries For Help.” This article detailed suicidal thoughts that students had expressed on the social media platform Reddit over the years of 2014 to 2018. The 15 posts were collected from /r/gatech and expressed a range of self-harm and suicidal behavior; many of which can be characterized as cries for help or support. Depression and suicidal behavior are serious societal problems. Social media has a mixed history of contributing to these problems, both positively and negatively. This project presents a data mining solution, in tandem with social media data, to identify periods of low sentiment so that action can be taken to combat depression and boost mental health. 
+
+# Methodology
+After conducting a literature review, the feature space of unigrams, an aggregated LabMT score, a count of slang, and a count of exclamation marks was finalized. The training set consists of 1400+ tweets manually classified as either negative, neutral, or positive. Naive Bayes, decision trees, support vector machines, and neural networks were evaluated against this training set. Neural networks yielded the highest accuracy. With neural networks established as the classification model, a novel approach to variable selection was performed.
+
+Since negative sentiment is the most valuable class to determine, oversampling and neural network parameter optimization was employed to increase the classification accuracy of negative sentiment. These two methods boosted negative class precision to 69% and recall to 58%.
+
+# Findings
+This project recommends that strategic actions for intervention (e.g. pet therapy) be undertaken by New York public services and nonprofits during these periods to counter depression and boost mental health. Furthermore, the analytical procedure conveyed by this report can be extended other timeframes, media, and urban locations to increase effectiveness. 
