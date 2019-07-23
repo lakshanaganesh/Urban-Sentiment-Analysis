@@ -1,0 +1,65 @@
+
+#importing required libraries
+import pandas as pd
+import numpy as np
+import re, string, unicodedata
+import nltk
+import contractions
+import inflect
+from bs4 import BeautifulSoup
+from nltk import word_tokenize, sent_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import LancasterStemmer, WordNetLemmatizer
+from sklearn.feature_extraction.text import CountVectorizer
+
+#reading input files
+df = pd.read_csv('../../../combined2.csv', encoding='latin-1').dropna()
+
+#smileys not coming through
+emoticons_str = r"""
+    (?:
+        [:=;] # Eyes
+        [oO\-]? # Nose (optional)
+        [D\)\]\(\]/\\OpP] # Mouth
+    )"""
+ 
+regex_str = [
+    r'(?:[\\]{1,2}x[a-z0-9][^ ]+)', # unicode strings
+    emoticons_str,
+    r'<[^>]+>', # HTML tags
+    r'(?:@[\w_]+)', # @-mentions
+    r"(?:\#+[\w_]+[\w\'_\-]*[\w_]+)", # hash-tags
+    r'http[s]?://(?:[a-z]|[0-9]|[$-_@.&amp;+]|[!*\(\),]|(?:%[0-9a-f][0-9a-f]))+', # URLs
+    r"(?:[a-z][a-z'\-_]+[a-z])", # words with - and '
+    r'(?:[\w_]+)', # other words
+    r'(?:\S)' # anything else
+]
+    
+tokens_re = re.compile(r'('+'|'.join(regex_str)+')', re.VERBOSE | re.IGNORECASE)
+emoticon_re = re.compile(r'^'+emoticons_str+'$', re.VERBOSE | re.IGNORECASE)
+ 
+def tokenize(s):
+    return tokens_re.findall(s)
+ 
+
+def preprocess(s):
+    tokens = tokenize(str(s.encode('utf-8'))[2:-1])
+    tokens = [token if emoticon_re.search(token) else token.lower() for token in tokens]
+    tokens = [word for word in tokens if word not in stopwords.words('english')]
+    return tokens
+
+
+for i, trial in df.iterrows():
+    text = df.loc[i, 'text'][2:-1]
+    text = preprocess(text)
+    df.loc[i, 'preproc'] = str(' '.join(text).encode('utf-8'))[2:-1].replace("\\\\\\\\","\\")
+
+
+X = df['preproc']
+
+
+final_df = pd.DataFrame(X)
+final_df['text'] = df['text'].values
+
+
+final_df.to_csv('../../../final_data_words.csv')
